@@ -117,6 +117,11 @@ class DashScopeEmbeddings(BaseModel, Embeddings):
     dashscope_api_key: Optional[str] = None
     max_retries: int = 5
     """Maximum number of retries to make when generating."""
+    dimension:Optional[int] = None
+    """The number of dimension the resulting output embeddings should have.
+
+     Supported in `text-embedding-3` and 'text-embedding-v4' and later models.
+    """
 
     model_config = ConfigDict(
         extra="forbid",
@@ -153,7 +158,7 @@ class DashScopeEmbeddings(BaseModel, Embeddings):
             List of embeddings, one for each text.
         """
         embeddings = embed_with_retry(
-            self, input=texts, text_type="document", model=self.model
+            self, input=texts, text_type="document", model=self.model,dimension=self.dimension
         )
         embedding_list = [item["embedding"] for item in embeddings]
         return embedding_list
@@ -168,6 +173,6 @@ class DashScopeEmbeddings(BaseModel, Embeddings):
             Embedding for the text.
         """
         embedding = embed_with_retry(
-            self, input=text, text_type="query", model=self.model
+            self, input=text, text_type="query", model=self.model,dimension=self.dimension
         )[0]["embedding"]
         return embedding
